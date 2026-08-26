@@ -34,7 +34,7 @@ export default function Home() {
           {/* Primary CTA: Resume Download */}
           <div className="mt-10 flex justify-center pointer-events-auto">
             <a 
-              href="https://drive.google.com/file/d/1V1ghArc0dQvUj0DF1DAYypKFIMZQCM2_/view?usp=drive_link" 
+              href="https://drive.usercontent.google.com/download?id=1PpmLUcKgG8oyywz1APtBKR-Cg2rVfX_r&export=download&authuser=0&confirm=t&uuid=9b0c78a2-11d7-4fd6-bde5-14d73b713f25&at=AFYLz4NtGQABJEni6o3hcUpLEjZE:1787755107775" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="group flex items-center gap-2 rounded-full bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-950 transition-all hover:bg-slate-300 hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(255,255,255,0.1)]"
@@ -161,7 +161,7 @@ export default function Home() {
                   <CardHeader className="p-4 pb-2 flex flex-row items-center justify-between">
                     <div>
                       <CardTitle className="text-slate-100 text-base">Research Intern</CardTitle>
-                      <CardDescription className="text-slate-400">ADRDE, DRDO • May-June 2024• Agra, UP, India</CardDescription>
+                      <CardDescription className="text-slate-400">ADRDE, DRDO • May-June 2024 • Agra, UP, India</CardDescription>
                     </div>
                     <a 
                       href="https://drive.google.com/file/d/1DnLuerQ-N-id9Y5GgoMB3BZC9brV87U-/view?usp=sharing" 
