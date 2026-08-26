@@ -17,18 +17,19 @@ export async function sendContactEmail(formData: FormData) {
   try {
     // 1. Send the inquiry to YOUR email
     await resend.emails.send({
-      from: "Portfolio Contact <onboarding@resend.dev>", // Change to your verified domain later
+      from: "Portfolio Contact <hello@ishaanm.dev>", // NOTE: Domain must be verified in Resend for this to work
       to: "ishaancodes01@gmail.com",
       subject: `New Opportunity/Inquiry from ${name}`,
       text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+      replyTo: email, // This lets you hit 'reply' in your email client directly to the sender
     });
 
     // 2. Send the auto-acknowledgment to the RECRUITER/USER
     await resend.emails.send({
-      from: "Ishaan Mishra <hello@ishaanmishra.dev>",
+      from: "Ishaan Mishra <hello@ishaanm.dev>", // NOTE: Domain must be verified in Resend for this to work
       to: email,
       subject: "Message Received - Ishaan Mishra",
-      text: `Hi ${name},\n\nThank you for reaching out! This is an automated acknowledgment to let you know I've received your message. \n\nI will review it and get back to you as soon as possible.\n\nBest regards,\nIshaan Mishra\nhttps://ishaanmishra.dev`,
+      text: `Hi ${name},\n\nThank you for reaching out! This is an automated acknowledgment to let you know I've received your message. \n\nI will review it and get back to you as soon as possible.\n\nBest regards,\nIshaan Mishra\nhttps://ishaanm.dev`,
     });
 
     return { success: true };
