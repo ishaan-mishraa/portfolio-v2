@@ -7,37 +7,36 @@ const inter = Inter({ subsets: ["latin"] });
 
 // --- GLOBAL SEO & OPEN GRAPH METADATA ---
 export const metadata: Metadata = {
+  metadataBase: new URL("https://ishaanm.dev"),
   title: "Ishaan Mishra",
-  description: "Portfolio of Ishaan Mishra, Systems Engineer (Digital) at TCS. Architecting robust backend infrastructure and machine learning solutions.",
+  description: "Ishaan Mishra builds reliable backends and trains computer-vision models, lately for deepfake detection.",
   keywords: [
-    "Ishaan Mishra", 
-    "Systems Engineer", 
-    "TCS", 
-    "Backend Developer", 
-    "Machine Learning", 
-    "Next.js", 
-    "KIIT University"
+    "Ishaan Mishra",
+    "Software Engineer",
+    "Backend",
+    "Spring Boot",
+    "Computer Vision",
+    "Deepfake Detection",
+    "Machine Learning",
   ],
   authors: [{ name: "Ishaan Mishra", url: "https://github.com/ishaan-mishraa" }],
   creator: "Ishaan Mishra",
-openGraph: {
+  openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://ishaanmishra.dev", 
-    title: "Ishaan Mishra | Systems Engineer",
-    description: "Systems Engineer (Digital) at TCS. Architecting robust backend infrastructure and machine learning solutions.",
-    siteName: "Ishaan Mishra Portfolio",
-    // Next.js handles images automatically now!
+    url: "https://ishaanm.dev",
+    title: "Ishaan Mishra",
+    description: "Backend engineering and computer vision. Projects, research and experience.",
+    siteName: "Ishaan Mishra",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ishaan Mishra | Systems Engineer",
-    description: "Systems Engineer (Digital) at TCS. Architecting robust backend infrastructure and machine learning solutions.",
+    title: "Ishaan Mishra",
+    description: "Backend engineering and computer vision. Projects, research and experience.",
     creator: "@ishaanmishraa",
-    // Next.js handles images automatically now!
   },
   icons: {
-    icon: "/icon.svg", // This points to the SVG favicon we created earlier
+    icon: "/icon.svg",
   },
 };
 
