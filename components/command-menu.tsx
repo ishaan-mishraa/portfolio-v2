@@ -33,17 +33,22 @@ const LinkedinIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const InstagramIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
-    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-  </svg>
-);
-
 export function CommandMenu() {
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
+
+  // Scroll to a section on the home page, navigating there first if needed
+  const goTo = (id: string | null) => {
+    if (window.location.pathname !== "/") {
+      router.push(id ? `/#${id}` : "/");
+      return;
+    }
+    if (!id) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -89,13 +94,17 @@ export function CommandMenu() {
             <CommandEmpty className="py-6 text-center text-sm text-slate-500">No results found.</CommandEmpty>
             
             <CommandGroup heading="Navigation">
-              <CommandItem onSelect={() => { setOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+              <CommandItem onSelect={() => { setOpen(false); goTo(null); }}>
                 <Terminal className="mr-2 h-4 w-4" />
                 <span>Home</span>
               </CommandItem>
-              <CommandItem onSelect={() => { setOpen(false); window.scrollTo({ top: 700, behavior: 'smooth' }); }}>
+              <CommandItem onSelect={() => { setOpen(false); goTo("work"); }}>
                 <Briefcase className="mr-2 h-4 w-4" />
-                <span>Experience & Projects</span>
+                <span>Selected Work</span>
+              </CommandItem>
+              <CommandItem onSelect={() => { setOpen(false); goTo("experience"); }}>
+                <Briefcase className="mr-2 h-4 w-4" />
+                <span>Experience & Education</span>
               </CommandItem>
               <CommandItem onSelect={() => { setOpen(false); router.push("/contact"); }}>
                 <Mail className="mr-2 h-4 w-4" />
@@ -121,10 +130,6 @@ export function CommandMenu() {
               <CommandItem onSelect={() => { setOpen(false); window.open("https://x.com/ishaanmishraa", "_blank"); }}>
                 <XIcon className="mr-2 h-4 w-4" />
                 <span>X (Twitter)</span>
-              </CommandItem>
-              <CommandItem onSelect={() => { setOpen(false); window.open("https://www.instagram.com/ishaanmxshra", "_blank"); }}>
-                <InstagramIcon className="mr-2 h-4 w-4" />
-                <span>Instagram</span>
               </CommandItem>
             </CommandGroup>
             
