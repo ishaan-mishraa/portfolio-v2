@@ -4,6 +4,7 @@ import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Download, Briefcase, GraduationCap, ExternalLink } from "lucide-react";
+import { StatTile } from "@/components/stat-tile";
 
 // ---------------------------------------------------------------------------
 // CONTENT — edit this section to update the site. The layout below reads it.
@@ -20,10 +21,21 @@ const TAGLINE =
 const SKILLS = ["Java", "Spring Boot", "Angular", "Next.js", "Python", "Deep Learning", "PostgreSQL"];
 
 const STATS = [
-  { value: "9.37", label: "CGPA, B.Tech CSE (KIIT)" },
-  { value: "96+", label: "GATE CS 2026 percentile" },
-  { value: "93.47%", label: "Best deepfake-detection accuracy" },
-  { value: "1", label: "Paper, Springer LNNS (ICTIS 2026)" },
+  {
+    value: "9.37",
+    label: "CGPA",
+    detail: "B.Tech in Computer Science & Engineering, KIIT University (2022–26).",
+  },
+  {
+    value: "93.47%",
+    label: "Deepfake detection accuracy",
+    detail: "Best of the hybrid Vision Transformer + CNN models our team built. More under Selected work.",
+  },
+  {
+    value: "Published",
+    label: "Springer LNNS",
+    detail: "Comparative Study of Emerging DL Models in Brain Tumor Detection. Presented at ICTIS 2026, Bangkok.",
+  },
 ];
 
 type LinkItem = { label: string; href: string };
@@ -63,10 +75,7 @@ const PROJECTS: Project[] = [
     description:
       "Leave management for small teams that warns when too many teammates would be off at once. Separate employee, manager and HR roles, enforced with Spring Security and JWT.",
     stack: ["Angular", "Spring Boot", "PostgreSQL", "Docker"],
-    links: [
-      { label: "Live", href: "https://leavewise-eight.vercel.app" },
-      { label: "Code", href: "https://github.com/ishaan-mishraa/leavewise" },
-    ],
+    links: [{ label: "Code", href: "https://github.com/ishaan-mishraa/leavewise" }],
   },
 ];
 
@@ -172,14 +181,9 @@ export default function Home() {
 
       {/* --- AT A GLANCE --- */}
       <section className="relative z-20 w-full max-w-5xl px-6 mx-auto mt-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {STATS.map((s) => (
-            <Card key={s.label} className={cardClass}>
-              <CardContent className="p-5">
-                <p className="text-3xl md:text-4xl font-bold text-slate-100 tracking-tighter">{s.value}</p>
-                <p className="mt-1 text-xs text-slate-400 leading-snug">{s.label}</p>
-              </CardContent>
-            </Card>
+            <StatTile key={s.label} value={s.value} label={s.label} detail={s.detail} />
           ))}
         </div>
       </section>
