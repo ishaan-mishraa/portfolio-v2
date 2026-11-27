@@ -10,7 +10,7 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
-import { Terminal, Briefcase, Search, Mail } from "lucide-react";
+import { Terminal, Briefcase, Search, Mail, FileText, FlaskConical } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 // --- CUSTOM INLINE BRAND ICONS ---
@@ -105,6 +105,14 @@ export function CommandMenu() {
               <CommandItem onSelect={() => { setOpen(false); goTo("experience"); }}>
                 <Briefcase className="mr-2 h-4 w-4" />
                 <span>Experience & Education</span>
+              </CommandItem>
+              <CommandItem onSelect={() => { setOpen(false); goTo("publications"); }}>
+                <FlaskConical className="mr-2 h-4 w-4" />
+                <span>Publications</span>
+              </CommandItem>
+              <CommandItem onSelect={() => { setOpen(false); router.push("/resume"); }}>
+                <FileText className="mr-2 h-4 w-4" />
+                <span>Resume</span>
               </CommandItem>
               <CommandItem onSelect={() => { setOpen(false); router.push("/contact"); }}>
                 <Mail className="mr-2 h-4 w-4" />
