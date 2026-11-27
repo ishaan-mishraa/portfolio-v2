@@ -9,7 +9,7 @@
 
 export type LinkItem = { label: string; href: string };
 
-export type Bullet = { text: string; tags: string[] };
+export type Bullet = { text: string; tags: string[]; pinLast?: boolean }; // pinLast: stays at the end when tailoring
 
 export type Role = {
   org: string;
@@ -37,8 +37,7 @@ export type SkillGroup = { label: string; items: { name: string; tags: string[] 
 
 export const PROFILE = {
   name: "Ishaan Mishra",
-  headline: "Data Engineer · ML Researcher",
-  tagline: "I build data pipelines by day and study how vision models detect deepfakes, and where they cheat.",
+  tagline: "I build data pipelines on AWS and train vision models, lately ones that catch deepfakes.",
   location: "Bengaluru, Karnataka, India",
   email: "ishaancodes01@gmail.com",
   site: "https://ishaanm.dev",
@@ -48,7 +47,7 @@ export const PROFILE = {
     x: "https://x.com/ishaanmishraa",
     kaggle: "https://www.kaggle.com/ishaanmxshra",
   },
-  now: "Data engineering at TCS by day. Mornings go to deepfake-detection research, math for ML, and Japanese (JLPT N4, July 2027).",
+  now: "Working as a data engineer at TCS. Learning Japanese and going deeper into deepfake-detection research.",
 };
 
 export const STATS = [
@@ -85,13 +84,24 @@ export const SKILLS: SkillGroup[] = [
     ],
   },
   {
+    label: "Cloud (AWS)",
+    items: [
+      { name: "S3", tags: ["s3", "aws", "cloud"] },
+      { name: "Lambda", tags: ["lambda", "aws", "serverless", "cloud"] },
+      { name: "Step Functions", tags: ["step-functions", "aws", "orchestration", "serverless"] },
+      { name: "EventBridge", tags: ["eventbridge", "aws", "event-driven"] },
+      { name: "Athena", tags: ["athena", "aws", "sql"] },
+      { name: "DynamoDB", tags: ["dynamodb", "aws", "nosql"] },
+      { name: "IAM", tags: ["iam", "aws", "security"] },
+    ],
+  },
+  {
     label: "Data Engineering",
     items: [
-      { name: "AWS", tags: ["aws", "cloud"] },
+      { name: "ETL pipelines", tags: ["etl", "data-engineering"] },
       { name: "Parquet", tags: ["parquet", "data-engineering"] },
       { name: "Data modeling", tags: ["data-modeling", "data-engineering", "sql"] },
-      { name: "ETL pipelines", tags: ["etl", "data-engineering"] },
-      { name: "BMC Control-M", tags: ["control-m", "scheduling", "data-engineering"] },
+      { name: "BMC Control-M", tags: ["control-m", "scheduling", "orchestration"] },
       { name: "Supabase", tags: ["supabase", "postgresql"] },
     ],
   },
@@ -128,6 +138,7 @@ export const SKILLS: SkillGroup[] = [
       { name: "Docker", tags: ["docker", "devops"] },
       { name: "Linux CLI", tags: ["linux"] },
       { name: "Jira", tags: ["jira", "agile"] },
+      { name: "BMC Helix", tags: ["itsm", "production-support"] },
       { name: "Swagger", tags: ["rest", "backend"] },
     ],
   },
@@ -136,22 +147,31 @@ export const SKILLS: SkillGroup[] = [
 export const EXPERIENCE: Role[] = [
   {
     org: "Tata Consultancy Services",
-    title: "Systems Engineer (Digital), Data Engineering",
+    title: "Systems Engineer (Digital) – Data Engineer",
     period: "Jun 2026 – Present",
     location: "Bengaluru, India",
     category: "work",
     bullets: [
       {
-        text: "Data engineer on a US insurance client's data platform: build and maintain pipelines on AWS that generate Parquet and other downstream data files.",
-        tags: ["data-engineering", "aws", "parquet", "etl", "cloud"],
+        text: "Build and maintain serverless ETL pipelines on AWS (Step Functions, Lambda, S3) for a US insurance client, generating Parquet and other downstream data files.",
+        tags: ["data-engineering", "etl", "aws", "step-functions", "lambda", "s3", "serverless", "parquet", "cloud"],
       },
       {
-        text: "Work on data models and scheduled batch jobs (BMC Control-M), with builds through Jenkins and production tickets through Jira and BMC Helix.",
-        tags: ["data-modeling", "control-m", "jenkins", "ci-cd", "jira", "scheduling", "agile"],
+        text: "Orchestrate multi-step workflows with Step Functions triggered by EventBridge rules and S3 events; query and validate output data with Amazon Athena.",
+        tags: ["step-functions", "eventbridge", "event-driven", "s3", "athena", "sql", "orchestration", "aws"],
       },
       {
-        text: "Completed the Initial Learning Program in the Java Full Stack domain (Spring Boot, Angular, SQL), delivering a full-stack banking application as the final project.",
+        text: "Work with DynamoDB tables and IAM roles and policies across pipeline services, and with the client's insurance data models.",
+        tags: ["dynamodb", "nosql", "iam", "security", "data-modeling", "aws"],
+      },
+      {
+        text: "Schedule and monitor production batch jobs with BMC Control-M; deploy through Jenkins CI/CD; resolve incidents via BMC Helix and Jira.",
+        tags: ["control-m", "scheduling", "jenkins", "ci-cd", "jira", "itsm", "production-support", "agile"],
+      },
+      {
+        text: "Completed TCS's Initial Learning Program in Java Full Stack (Spring Boot, Angular, SQL); built a role-based banking app as the capstone.",
         tags: ["java", "spring", "angular", "sql", "backend"],
+        pinLast: true,
       },
     ],
   },
@@ -194,14 +214,14 @@ export const PROJECTS: Project[] = [
     kind: "Research",
     year: "2025",
     description:
-      "Pairs a Swin Transformer with ConvNeXt, DenseNet, MobileNet and CLIP backbones, plus an FFT frequency branch and attention fusion, to tell real faces from manipulated ones. Every hybrid beat its standalone backbone on our merged test split. Now studying how dataset bias inflates numbers like these.",
+      "Pairs a Swin Transformer with ConvNeXt, DenseNet, MobileNet and CLIP backbones, plus an FFT frequency branch and attention fusion, to tell real faces from manipulated ones. The best hybrid (ConvNeXt-Swin) reached 93.47% test accuracy, and every hybrid beat its standalone backbone.",
     bullets: [
       {
         text: "Researched hybrid architectures combining Swin Transformers with CNN and CLIP backbones, an FFT frequency branch and attention fusion to detect AI-generated and manipulated faces.",
         tags: ["deep-learning", "computer-vision", "transformers", "research", "pytorch"],
       },
       {
-        text: "ConvNeXt-Swin hybrid reached 93.47% accuracy and 93.01% F1 on our merged test split, outperforming every standalone backbone.",
+        text: "Achieved a peak test accuracy of 93.47% and an F1 score of 93.01% with a ConvNeXt-Swin hybrid, outperforming standalone architectures.",
         tags: ["deep-learning", "ml", "research"],
       },
     ],
@@ -294,6 +314,7 @@ export const PUBLICATIONS = [
     citation:
       "A. Hasan, I. Mishra, J. Bose, J. V. C. Sai, J. Kumar, K. Akhter, R. K. Dash. “Comparative Study of Emerging DL Models in BTD.” ICT for Intelligent Systems (ICTIS 2026), LNNS vol. 2137, Springer, 2027.",
     href: undefined as string | undefined, // add the DOI link once the chapter is live
+    code: "https://github.com/ishaan-mishraa/btd-comparative-study",
     bullets: [
       "Co-authored and presented research on binary classification of brain tumors from MRI scans at ICTIS 2026 in Bangkok, Thailand; published in Springer LNNS.",
       "Benchmarked VGG19, ResNet50, DenseNet121, ConvNeXt-Tiny and EfficientNet-B0 with transfer learning; modern CNNs (ConvNeXt, EfficientNet) performed best.",
@@ -303,7 +324,6 @@ export const PUBLICATIONS = [
 
 export const ACHIEVEMENTS = [
   { lead: "GATE CS 2026", text: "cleared with a 96+ percentile (also qualified in 2025)" },
-  { lead: "Enactus Nationals 2024", text: "Early Stage Category winner (team)" },
 ];
 
 // Which projects the standard (non-tailored) resume shows, in this order.

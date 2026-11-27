@@ -4,7 +4,7 @@ import { ImageResponse } from 'next/og';
 export const runtime = 'edge';
 
 // Image metadata
-export const alt = 'Ishaan Mishra: data engineering and ML research';
+export const alt = 'Ishaan Mishra: data engineering and computer vision';
 export const size = {
   width: 1200,
   height: 630,
@@ -58,25 +58,6 @@ export default async function Image() {
             boxShadow: '0 0 80px rgba(0,0,0,0.5)',
           }}
         >
-          {/* Monogram Logo */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '64px',
-              height: '64px',
-              backgroundColor: '#f8fafc',
-              color: '#020617',
-              fontSize: '32px',
-              fontWeight: 'bold',
-              borderRadius: '12px',
-              marginBottom: '32px',
-            }}
-          >
-            IM
-          </div>
-
           <h1
             style={{
               fontSize: '72px',
@@ -98,7 +79,7 @@ export default async function Image() {
               letterSpacing: '-0.02em',
             }}
           >
-            Data Engineering <span style={{ color: '#475569', margin: '0 12px' }}>·</span> ML Research
+            Data Engineering <span style={{ color: '#475569', margin: '0 12px' }}>·</span> Computer Vision
           </p>
 
           {/* Tech Badges */}

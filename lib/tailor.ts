@@ -20,13 +20,25 @@ const KEYWORDS: Record<string, string[]> = {
   supabase: ["supabase"],
   c: ["c programming", "c/c++", "embedded c"],
   linux: ["linux", "unix", "shell", "bash"],
-  aws: ["aws", "amazon web services", "s3", "glue", "athena", "lambda", "redshift", "emr"],
+  aws: ["aws", "amazon web services", "glue", "redshift", "emr"],
+  s3: ["s3", "object storage"],
+  lambda: ["lambda", "aws lambda"],
+  "step-functions": ["step functions", "step function", "stepfunctions", "state machine", "state machines"],
+  eventbridge: ["eventbridge", "cloudwatch events", "event bridge"],
+  "event-driven": ["event-driven", "event driven", "event triggers", "triggers", "sqs", "sns"],
+  athena: ["athena", "presto", "trino"],
+  dynamodb: ["dynamodb", "dynamo db"],
+  nosql: ["nosql", "no-sql", "mongodb", "key-value"],
+  iam: ["iam", "access management", "least privilege", "least-privilege"],
+  orchestration: ["orchestration", "orchestrate", "workflow", "workflows"],
+  itsm: ["servicenow", "itsm", "incident management", "bmc helix", "remedy"],
+  "production-support": ["production support", "on-call", "incident", "incidents", "monitoring"],
   cloud: ["cloud", "gcp", "azure"],
   parquet: ["parquet", "avro", "orc", "file formats"],
   "data-engineering": ["data engineer", "data engineering", "data pipeline", "data pipelines", "data platform", "data warehouse", "data lake", "lakehouse", "spark", "pyspark", "airflow", "big data"],
   etl: ["etl", "elt", "ingestion", "batch processing"],
   "data-modeling": ["data modeling", "data modelling", "dimensional", "schema design", "star schema"],
-  scheduling: ["scheduling", "scheduler", "orchestration", "batch jobs"],
+  scheduling: ["scheduling", "scheduler", "batch jobs", "cron"],
   "control-m": ["control-m", "controlm"],
   jenkins: ["jenkins"],
   "ci-cd": ["ci/cd", "ci-cd", "continuous integration", "github actions", "devops pipeline"],
@@ -86,44 +98,68 @@ export type ResumeData = {
 };
 
 const MAX_PROJECTS = 3;
-const RESUME_PROJECTS = PROJECTS.filter((p) => p.onResume !== false);
+export const RESUME_PROJECTS = PROJECTS.filter((p) => p.onResume !== false);
 
-/** Default resume: authored content, with the projects listed in DEFAULT_RESUME_PROJECTS. */
-export function defaultResume(): ResumeData {
-  const projects = DEFAULT_RESUME_PROJECTS.map((t) => RESUME_PROJECTS.find((p) => p.title === t)).filter(
-    (p): p is Project => Boolean(p),
-  );
-  return { experience: EXPERIENCE, projects, skills: SKILLS, tailored: false, matched: [] };
+/** All resume-eligible projects, most relevant to the JD first (authored order breaks ties). */
+export function rankProjects(jd: string): Project[] {
+  const weights = extractTags(jd);
+  if (weights.size === 0) {
+    const order = new Map(DEFAULT_RESUME_PROJECTS.map((t, i) => [t, i]));
+    return [...RESUME_PROJECTS].sort((a, b) => (order.get(a.title) ?? 99) - (order.get(b.title) ?? 99));
+  }
+  return RESUME_PROJECTS.map((p, i) => ({ p, s: score(p.tags, weights), i }))
+    .sort((a, b) => b.s - a.s || a.i - b.i)
+    .map((x) => x.p);
 }
+
+/** Titles of the projects suggested for this JD (the default three when there is no JD). */
+export function suggestedProjects(jd: string): string[] {
+  return extractTags(jd).size === 0 ? DEFAULT_RESUME_PROJECTS : rankProjects(jd).slice(0, MAX_PROJECTS).map((p) => p.title);
+}
+
+export type ResumeOptions = {
+  jd?: string;
+  projects?: string[]; // titles to include; omitted = suggestion
+  hiddenBullets?: string[]; // experience bullet texts to leave out
+};
 
 /**
- * Tailored resume: same true content, reordered and selected for relevance.
- * Nothing is invented or reworded; low-relevance items are moved down or left out.
+ * Builds the resume from content/profile.ts. With a JD, relevant experience bullets, projects
+ * and skills move up. Content is only selected and reordered, never generated or reworded.
  */
-export function tailorResume(jd: string): ResumeData {
+export function buildResume({ jd = "", projects, hiddenBullets = [] }: ResumeOptions = {}): ResumeData {
   const weights = extractTags(jd);
-  if (weights.size === 0) return defaultResume();
+  const tailored = weights.size > 0;
+  const hidden = new Set(hiddenBullets);
 
-  // Experience stays chronological; bullets inside each role are reordered by relevance.
-  const experience = EXPERIENCE.map((role) => ({
-    ...role,
-    bullets: [...role.bullets].sort((a, b) => score(b.tags, weights) - score(a.tags, weights)),
-  }));
+  const experience = EXPERIENCE.map((role) => {
+    const bullets = role.bullets.filter((b) => !hidden.has(b.text));
+    return {
+      ...role,
+      bullets: tailored
+        ? [
+            ...bullets.filter((b) => !b.pinLast).sort((a, b) => score(b.tags, weights) - score(a.tags, weights)),
+            ...bullets.filter((b) => b.pinLast),
+          ]
+        : bullets,
+    };
+  });
 
-  // Projects: pick the most relevant ones (stable for ties, so authored order wins).
-  const projects = RESUME_PROJECTS.map((p, i) => ({ p, s: score(p.tags, weights), i }))
-    .sort((a, b) => b.s - a.s || a.i - b.i)
-    .slice(0, MAX_PROJECTS)
-    .map((x) => x.p); // bullets keep their authored order so each project still reads as a story
+  const include = new Set(projects ?? suggestedProjects(jd));
+  const chosen = rankProjects(jd).filter((p) => include.has(p.title)); // bullets keep authored order
 
-  // Skills: within each group, relevant skills first; groups ordered by total relevance.
-  const skills = SKILLS.map((g, i) => {
-    const items = [...g.items].sort((a, b) => score(b.tags, weights) - score(a.tags, weights));
-    return { g: { ...g, items }, s: g.items.reduce((s, it) => s + score(it.tags, weights), 0), i };
-  })
-    .sort((a, b) => b.s - a.s || a.i - b.i)
-    .map((x) => x.g);
+  const skills = tailored
+    ? SKILLS.map((g, i) => {
+        const items = [...g.items].sort((a, b) => score(b.tags, weights) - score(a.tags, weights));
+        return { g: { ...g, items }, s: g.items.reduce((sum, it) => sum + score(it.tags, weights), 0), i };
+      })
+        .sort((a, b) => b.s - a.s || a.i - b.i)
+        .map((x) => x.g)
+    : SKILLS;
 
   const matched = [...weights.entries()].sort((a, b) => b[1] - a[1]).map(([t]) => t);
-  return { experience, projects, skills, tailored: true, matched };
+  return { experience, projects: chosen, skills, tailored, matched };
 }
+
+/** The standard resume everyone can download. */
+export const defaultResume = () => buildResume();

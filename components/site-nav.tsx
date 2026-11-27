@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 const LINKS = [
   { href: "/#work", label: "Work" },
-  { href: "/#research", label: "Research" },
+  { href: "/#publications", label: "Publications" },
   { href: "/#experience", label: "Experience" },
   { href: "/contact", label: "Contact" },
 ];
@@ -28,12 +28,8 @@ export function SiteNav() {
       }`}
     >
       <nav className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
-        <Link
-          href="/"
-          className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-xs font-bold tracking-tight text-slate-950"
-          aria-label="Home"
-        >
-          IM
+        <Link href="/" className="font-serif text-[1.35rem] leading-none tracking-tight text-slate-100 transition-colors hover:text-white">
+          Ishaan Mishra
         </Link>
         <div className="flex items-center gap-1 text-sm">
           {LINKS.map((l) => (

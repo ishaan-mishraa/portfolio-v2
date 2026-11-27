@@ -8,14 +8,14 @@ import type { ResumeData } from "@/lib/tailor";
 const MARGIN = 25; // 0.35in
 
 const s = StyleSheet.create({
-  page: { padding: MARGIN, fontFamily: "Helvetica", fontSize: 10, color: "#000", lineHeight: 1.2 },
+  page: { padding: MARGIN, fontFamily: "Helvetica", fontSize: 10, color: "#000", lineHeight: 1.17 },
   name: { fontFamily: "Helvetica-Bold", fontSize: 24, textAlign: "center", lineHeight: 1.1 },
   contact: { flexDirection: "row", justifyContent: "center", flexWrap: "wrap", marginTop: 5, fontSize: 9.5 },
   link: { color: "#000", textDecoration: "underline" },
   sep: { marginHorizontal: 6 },
-  section: { marginTop: 5 },
+  section: { marginTop: 4 },
   sectionTitle: {
-    fontFamily: "Helvetica-Bold", fontSize: 12.5, borderBottomWidth: 0.8, borderBottomColor: "#000",
+    fontFamily: "Helvetica-Bold", fontSize: 12, borderBottomWidth: 0.8, borderBottomColor: "#000",
     paddingBottom: 1.5, marginBottom: 3,
   },
   block: { paddingLeft: 10, marginBottom: 2.5 },
@@ -27,7 +27,6 @@ const s = StyleSheet.create({
   dot: { width: 9 },
   bulletText: { flex: 1, fontSize: 9.3 },
   line: { paddingLeft: 10, fontSize: 9.5, marginBottom: 0.5 },
-  footer: { position: "absolute", bottom: 10, left: MARGIN, right: MARGIN, fontSize: 6.5, color: "#999", textAlign: "center" },
 });
 
 function Bullets({ items }: { items: string[] }) {
@@ -61,7 +60,7 @@ function Subheading({ left1, right1, left2, right2 }: { left1: string; right1: s
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <View style={s.section}>
-      <Text style={s.sectionTitle}>{title}</Text>
+      <Text style={s.sectionTitle} minPresenceAhead={30}>{title}</Text>
       {children}
     </View>
   );
@@ -175,9 +174,6 @@ function ResumeDocument({ data }: { data: ResumeData }) {
           ))}
         </Section>
 
-        <Text style={s.footer} fixed>
-          Latest version: {host}/resume{data.tailored ? " · ordered for a specific job description" : ""}
-        </Text>
       </Page>
     </Document>
   );

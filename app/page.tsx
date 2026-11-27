@@ -42,15 +42,7 @@ export default function Home() {
         />
 
         <div className="pointer-events-none relative z-20 flex w-full max-w-3xl flex-col items-center px-6">
-          <span className="pointer-events-auto mb-8 inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/60 px-3 py-1 text-xs text-slate-400 backdrop-blur-sm">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
-            </span>
-            {PROFILE.headline}
-          </span>
-
-          <h1 className="pointer-events-auto bg-gradient-to-b from-slate-50 to-slate-400 bg-clip-text text-center text-5xl font-bold tracking-tight text-transparent md:text-7xl">
+          <h1 className="pointer-events-auto text-center font-serif text-6xl leading-none tracking-tight text-slate-50 md:text-8xl">
             {PROFILE.name}
           </h1>
 
@@ -90,7 +82,7 @@ export default function Home() {
       <section id="work" className="relative z-20 mx-auto mt-28 w-full max-w-5xl scroll-mt-20 px-6">
         <SectionHeading index="01" title="Selected work" />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {PROJECTS.map((p) => (
+          {PROJECTS.filter((p) => p.kind !== "Publication").map((p) => (
             <SpotlightCard key={p.title}>
               <div className="flex h-full flex-col gap-4 p-6">
                 <div>
@@ -124,45 +116,41 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- RESEARCH --- */}
-      <section id="research" className="relative z-20 mx-auto mt-28 w-full max-w-5xl scroll-mt-20 px-6">
-        <SectionHeading index="02" title="Research" />
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
-          <SpotlightCard className="md:col-span-3">
-            <div className="p-6">
-              <p className="font-mono text-[11px] uppercase tracking-widest text-slate-500">Current focus</p>
-              <h3 className="mt-1.5 text-lg font-semibold text-slate-100">Dataset bias in deepfake detection</h3>
-              <p className="mt-3 text-sm leading-relaxed text-slate-300">
-                Detectors trained on merged datasets can score well by recognising <em>which dataset</em> an image came
-                from rather than whether it is fake. I&apos;m measuring how much of reported accuracy comes from such
-                shortcuts, and which fixes — identity-disjoint splits, matched compression, frequency features —
-                actually help models generalise.
-              </p>
-            </div>
-          </SpotlightCard>
-          <SpotlightCard className="md:col-span-2">
-            <div className="p-6">
-              <p className="font-mono text-[11px] uppercase tracking-widest text-slate-500">Publications</p>
-              <ul className="mt-3 space-y-3">
-                {PUBLICATIONS.map((p) => (
-                  <li key={p.title} className="text-sm leading-relaxed text-slate-300">
-                    {p.citation}
-                    <span className="mt-1 block text-xs text-slate-500">{p.venue}</span>
-                    {p.href && (
+      {/* --- PUBLICATIONS --- */}
+      <section id="publications" className="relative z-20 mx-auto mt-28 w-full max-w-5xl scroll-mt-20 px-6">
+        <SectionHeading index="02" title="Publications" />
+        <div className="flex flex-col gap-4">
+          {PUBLICATIONS.map((p) => (
+            <SpotlightCard key={p.title}>
+              <div className="flex flex-col gap-2 p-6 md:flex-row md:items-start md:justify-between md:gap-8">
+                <div>
+                  <p className="font-mono text-[11px] uppercase tracking-widest text-slate-500">{p.venue}</p>
+                  <h3 className="mt-1.5 text-lg font-semibold text-slate-100">
+                    {p.title.replace(/^Conference Paper:\s*/, "")}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-400">{p.citation}</p>
+                </div>
+                <div className="flex shrink-0 gap-4">
+                  {[
+                    ["DOI", p.href],
+                    ["GitHub", p.code],
+                  ]
+                    .filter(([, href]) => href)
+                    .map(([label, href]) => (
                       <a
-                        href={p.href}
+                        key={label}
+                        href={href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-1 inline-flex items-center gap-0.5 text-sky-400 hover:text-sky-300"
+                        className="flex items-center gap-1 text-sm font-medium text-sky-400 hover:text-sky-300"
                       >
-                        DOI <ArrowUpRight className="h-3 w-3" />
+                        {label} <ArrowUpRight className="h-3.5 w-3.5" />
                       </a>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </SpotlightCard>
+                    ))}
+                </div>
+              </div>
+            </SpotlightCard>
+          ))}
         </div>
       </section>
 
@@ -263,24 +251,6 @@ export default function Home() {
               <p className="mt-2 text-sm leading-relaxed text-slate-300">{PROFILE.now}</p>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* --- CTA --- */}
-      <section className="relative z-20 mx-auto mt-28 w-full max-w-5xl px-6">
-        <div className="flex flex-col items-start justify-between gap-6 rounded-2xl border border-slate-800 bg-slate-900/40 p-8 md:flex-row md:items-center">
-          <div>
-            <h2 className="text-xl font-semibold text-slate-100">Want my resume for a specific role?</h2>
-            <p className="mt-1 text-sm text-slate-400">
-              Paste the job description and download a version ordered around what the role needs.
-            </p>
-          </div>
-          <Link
-            href="/resume#tailor"
-            className="group flex shrink-0 items-center gap-2 rounded-full bg-slate-100 px-5 py-2.5 text-sm font-semibold text-slate-950 transition-colors hover:bg-white"
-          >
-            Tailor my resume <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </Link>
         </div>
       </section>
 

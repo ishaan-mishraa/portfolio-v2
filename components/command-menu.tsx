@@ -106,13 +106,13 @@ export function CommandMenu() {
                 <Briefcase className="mr-2 h-4 w-4" />
                 <span>Experience & Education</span>
               </CommandItem>
-              <CommandItem onSelect={() => { setOpen(false); goTo("research"); }}>
+              <CommandItem onSelect={() => { setOpen(false); goTo("publications"); }}>
                 <FlaskConical className="mr-2 h-4 w-4" />
-                <span>Research</span>
+                <span>Publications</span>
               </CommandItem>
               <CommandItem onSelect={() => { setOpen(false); router.push("/resume"); }}>
                 <FileText className="mr-2 h-4 w-4" />
-                <span>Resume (download or tailor)</span>
+                <span>Resume</span>
               </CommandItem>
               <CommandItem onSelect={() => { setOpen(false); router.push("/contact"); }}>
                 <Mail className="mr-2 h-4 w-4" />
