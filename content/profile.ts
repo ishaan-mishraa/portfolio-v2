@@ -109,9 +109,10 @@ export const SKILLS: SkillGroup[] = [
       { id: "s3", name: "S3", tags: ["s3", "aws", "cloud"] },
       { id: "lambda", name: "Lambda", tags: ["lambda", "aws", "serverless", "cloud"] },
       { id: "step-functions", name: "Step Functions", tags: ["step-functions", "aws", "orchestration", "serverless"] },
+      { id: "glue", name: "Glue", tags: ["glue", "aws", "etl", "data-engineering"] },
       { id: "eventbridge", name: "EventBridge", tags: ["eventbridge", "aws", "event-driven"] },
-      { id: "athena", name: "Athena", tags: ["athena", "aws", "sql"] },
-      { id: "dynamodb", name: "DynamoDB", tags: ["dynamodb", "aws", "nosql"] },
+      { id: "athena", name: "Athena", tags: ["athena", "aws", "sql", "data-quality"] },
+      { id: "dynamodb", name: "DynamoDB", tags: ["dynamodb", "aws", "nosql", "metadata"] },
       { id: "iam", name: "IAM", tags: ["iam", "aws", "security"] },
     ],
   },
@@ -179,18 +180,23 @@ export const EXPERIENCE: Role[] = [
     bullets: [
       {
         id: "tcs-pipelines",
-        text: "Build and maintain serverless ETL pipelines on AWS (Step Functions, Lambda, S3) for a US insurance client, generating Parquet and other downstream data files.",
-        tags: ["data-engineering", "etl", "aws", "step-functions", "lambda", "s3", "serverless", "parquet", "cloud"],
+        text: "Build and maintain serverless data pipelines on AWS (Step Functions, Glue, Lambda, S3) for a US insurance client, generating Parquet and other downstream data files.",
+        tags: ["data-engineering", "etl", "aws", "step-functions", "glue", "lambda", "s3", "serverless", "parquet", "cloud"],
       },
       {
         id: "tcs-orchestration",
-        text: "Orchestrate multi-step workflows with Step Functions triggered by EventBridge rules and S3 events; query and validate output data with Amazon Athena.",
-        tags: ["step-functions", "eventbridge", "event-driven", "s3", "athena", "sql", "orchestration", "aws"],
+        text: "Ingest data from client-side pollers, an S3 drop zone and direct Parquet uploads through Step Functions and Glue workflows triggered by EventBridge rules and S3 events.",
+        tags: ["step-functions", "glue", "eventbridge", "event-driven", "s3", "parquet", "etl", "orchestration", "aws"],
+      },
+      {
+        id: "tcs-athena",
+        text: "Check and validate the ingested data with Amazon Athena SQL queries across all three ingestion paths.",
+        tags: ["athena", "sql", "data-quality", "aws"],
       },
       {
         id: "tcs-dynamodb-iam",
-        text: "Work with DynamoDB tables and IAM roles and policies across pipeline services, and with the client's insurance data models.",
-        tags: ["dynamodb", "nosql", "iam", "security", "data-modeling", "aws"],
+        text: "Track pipeline logs, data records, metadata and processing status in DynamoDB to monitor data loads.",
+        tags: ["dynamodb", "nosql", "metadata", "production-support", "aws"],
       },
       {
         id: "tcs-ops",
