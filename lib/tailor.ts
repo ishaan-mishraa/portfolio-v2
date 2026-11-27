@@ -1,12 +1,4 @@
-import {
-  DEFAULT_RESUME_PROJECTS,
-  EXPERIENCE,
-  PROJECTS,
-  SKILLS,
-  type Project,
-  type Role,
-  type SkillGroup,
-} from "@/content/profile";
+import { catalog, type CatalogNode, type Node, type ResumeConfig } from "@/lib/resume-model";
 
 // Maps phrases that appear in job descriptions to the tags used in content/profile.ts.
 // Matching is case-insensitive on word boundaries. Add synonyms here as needed.
@@ -89,77 +81,49 @@ export function extractTags(jd: string): Map<string, number> {
 const score = (tags: string[], weights: Map<string, number>) =>
   tags.reduce((s, t) => s + Math.min(weights.get(t) ?? 0, 3), 0);
 
-export type ResumeData = {
-  experience: Role[];
-  projects: Project[];
-  skills: SkillGroup[];
-  tailored: boolean;
-  matched: string[]; // human-readable matched keywords, for the UI
-};
-
 const MAX_PROJECTS = 3;
-export const RESUME_PROJECTS = PROJECTS.filter((p) => p.onResume !== false);
-
-/** All resume-eligible projects, most relevant to the JD first (authored order breaks ties). */
-export function rankProjects(jd: string): Project[] {
-  const weights = extractTags(jd);
-  if (weights.size === 0) {
-    const order = new Map(DEFAULT_RESUME_PROJECTS.map((t, i) => [t, i]));
-    return [...RESUME_PROJECTS].sort((a, b) => (order.get(a.title) ?? 99) - (order.get(b.title) ?? 99));
-  }
-  return RESUME_PROJECTS.map((p, i) => ({ p, s: score(p.tags, weights), i }))
-    .sort((a, b) => b.s - a.s || a.i - b.i)
-    .map((x) => x.p);
-}
-
-/** Titles of the projects suggested for this JD (the default three when there is no JD). */
-export function suggestedProjects(jd: string): string[] {
-  return extractTags(jd).size === 0 ? DEFAULT_RESUME_PROJECTS : rankProjects(jd).slice(0, MAX_PROJECTS).map((p) => p.title);
-}
-
-export type ResumeOptions = {
-  jd?: string;
-  projects?: string[]; // titles to include; omitted = suggestion
-  hiddenBullets?: string[]; // experience bullet texts to leave out
-};
 
 /**
- * Builds the resume from content/profile.ts. With a JD, relevant experience bullets, projects
- * and skills move up. Content is only selected and reordered, never generated or reworded.
+ * Suggests a layout for a job description, starting from the current one:
+ * relevant skills, skill groups and experience bullets move up, and the most
+ * relevant projects are ticked (top 3). Nothing is reworded or invented.
  */
-export function buildResume({ jd = "", projects, hiddenBullets = [] }: ResumeOptions = {}): ResumeData {
+export function arrangeForJd(config: ResumeConfig, jd: string): { config: ResumeConfig; matched: string[] } {
   const weights = extractTags(jd);
-  const tailored = weights.size > 0;
-  const hidden = new Set(hiddenBullets);
+  const matched = [...weights.entries()].sort((a, b) => b[1] - a[1]).map(([t]) => t);
+  if (weights.size === 0) return { config, matched };
 
-  const experience = EXPERIENCE.map((role) => {
-    const bullets = role.bullets.filter((b) => !hidden.has(b.text));
-    return {
-      ...role,
-      bullets: tailored
-        ? [
-            ...bullets.filter((b) => !b.pinLast).sort((a, b) => score(b.tags, weights) - score(a.tags, weights)),
-            ...bullets.filter((b) => b.pinLast),
-          ]
-        : bullets,
-    };
+  const cat = new Map<string, CatalogNode>();
+  const index = (nodes: CatalogNode[], prefix: string) =>
+    nodes.forEach((n) => {
+      cat.set(prefix + n.id, n);
+      if (n.children) index(n.children, prefix + n.id + "/");
+    });
+  index(catalog().sections, "");
+
+  const s = (path: string) => score(cat.get(path)?.tags ?? [], weights);
+  const sortBy = (nodes: Node[], path: string) =>
+    nodes
+      .map((n, i) => ({ n, i, sc: s(path + n.id), pin: cat.get(path + n.id)?.pinLast }))
+      .sort((a, b) => Number(a.pin ?? 0) - Number(b.pin ?? 0) || b.sc - a.sc || a.i - b.i)
+      .map((x) => x.n);
+
+  const sections = config.sections.map((sec) => {
+    const base = sec.id + "/";
+    const kids = sec.children ?? [];
+    if (sec.id === "skills") {
+      const groups = sortBy(kids, base).map((g) => ({ ...g, children: sortBy(g.children ?? [], base + g.id + "/") }));
+      return { ...sec, children: groups };
+    }
+    if (sec.id === "experience") {
+      return { ...sec, children: kids.map((r) => ({ ...r, children: sortBy(r.children ?? [], base + r.id + "/") })) };
+    }
+    if (sec.id === "projects") {
+      const ranked = sortBy(kids, base);
+      return { ...sec, children: ranked.map((p, i) => ({ ...p, on: i < MAX_PROJECTS })) };
+    }
+    return sec;
   });
 
-  const include = new Set(projects ?? suggestedProjects(jd));
-  const chosen = rankProjects(jd).filter((p) => include.has(p.title)); // bullets keep authored order
-
-  const skills = tailored
-    ? SKILLS.map((g, i) => {
-        const items = [...g.items].sort((a, b) => score(b.tags, weights) - score(a.tags, weights));
-        return { g: { ...g, items }, s: g.items.reduce((sum, it) => sum + score(it.tags, weights), 0), i };
-      })
-        .sort((a, b) => b.s - a.s || a.i - b.i)
-        .map((x) => x.g)
-    : SKILLS;
-
-  const matched = [...weights.entries()].sort((a, b) => b[1] - a[1]).map(([t]) => t);
-  return { experience, projects: chosen, skills, tailored, matched };
+  return { config: { ...config, sections }, matched };
 }
-
-/** The standard resume everyone can download. */
-export const defaultResume = () => buildResume();

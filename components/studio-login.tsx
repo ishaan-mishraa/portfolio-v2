@@ -10,7 +10,7 @@ export function StudioLogin() {
   return (
     <form action={action} className="mx-auto mt-16 w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-900/50 p-8">
       <Lock className="h-5 w-5 text-slate-500" />
-      <h1 className="mt-4 font-serif text-3xl text-slate-100">Studio</h1>
+      <h1 className="mt-4 text-2xl font-bold tracking-tight text-slate-100">Studio</h1>
       <p className="mt-1 text-sm text-slate-400">Private. Owner access only.</p>
       <input
         name="password"

@@ -42,7 +42,7 @@ export default function Home() {
         />
 
         <div className="pointer-events-none relative z-20 flex w-full max-w-3xl flex-col items-center px-6">
-          <h1 className="pointer-events-auto text-center font-serif text-6xl leading-none tracking-tight text-slate-50 md:text-8xl">
+          <h1 className="pointer-events-auto bg-gradient-to-b from-slate-50 to-slate-400 bg-clip-text text-center text-5xl font-bold tracking-tight text-transparent md:text-7xl">
             {PROFILE.name}
           </h1>
 
