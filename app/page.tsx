@@ -145,16 +145,19 @@ export default function Home() {
               <p className="font-mono text-[11px] uppercase tracking-widest text-slate-500">Publications</p>
               <ul className="mt-3 space-y-3">
                 {PUBLICATIONS.map((p) => (
-                  <li key={p.href} className="text-sm leading-relaxed text-slate-300">
-                    {p.citation}{" "}
-                    <a
-                      href={p.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-0.5 text-sky-400 hover:text-sky-300"
-                    >
-                      DOI <ArrowUpRight className="h-3 w-3" />
-                    </a>
+                  <li key={p.title} className="text-sm leading-relaxed text-slate-300">
+                    {p.citation}
+                    <span className="mt-1 block text-xs text-slate-500">{p.venue}</span>
+                    {p.href && (
+                      <a
+                        href={p.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-1 inline-flex items-center gap-0.5 text-sky-400 hover:text-sky-300"
+                      >
+                        DOI <ArrowUpRight className="h-3 w-3" />
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -231,11 +234,11 @@ export default function Home() {
             <div>
               <p className="mb-3 font-mono text-[11px] uppercase tracking-widest text-slate-500">Education</p>
               {EDUCATION.map((e) => (
-                <SpotlightCard key={e.title}>
+                <SpotlightCard key={e.school}>
                   <div className="p-5">
-                    <h3 className="text-base font-semibold text-slate-100">{e.title}</h3>
+                    <h3 className="text-base font-semibold text-slate-100">{e.degree}</h3>
                     <p className="mt-0.5 text-sm text-slate-400">
-                      {e.org} · {e.period}
+                      {e.school} · {e.period}
                     </p>
                     <p className="mt-2 text-sm text-slate-300">{e.detail}</p>
                   </div>
@@ -246,9 +249,11 @@ export default function Home() {
               <p className="mb-3 font-mono text-[11px] uppercase tracking-widest text-slate-500">Achievements</p>
               <ul className="space-y-2 text-sm leading-relaxed text-slate-300">
                 {ACHIEVEMENTS.map((a) => (
-                  <li key={a} className="flex gap-2">
+                  <li key={a.lead} className="flex gap-2">
                     <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-slate-500" />
-                    {a}
+                    <span>
+                      <span className="font-medium text-slate-100">{a.lead}</span>: {a.text}
+                    </span>
                   </li>
                 ))}
               </ul>

@@ -1,4 +1,12 @@
-import { EXPERIENCE, PROJECTS, SKILLS, type Project, type Role, type SkillGroup } from "@/content/profile";
+import {
+  DEFAULT_RESUME_PROJECTS,
+  EXPERIENCE,
+  PROJECTS,
+  SKILLS,
+  type Project,
+  type Role,
+  type SkillGroup,
+} from "@/content/profile";
 
 // Maps phrases that appear in job descriptions to the tags used in content/profile.ts.
 // Matching is case-insensitive on word boundaries. Add synonyms here as needed.
@@ -10,6 +18,8 @@ const KEYWORDS: Record<string, string[]> = {
   sql: ["sql", "mysql", "t-sql", "pl/sql", "query", "queries"],
   postgresql: ["postgres", "postgresql"],
   supabase: ["supabase"],
+  c: ["c programming", "c/c++", "embedded c"],
+  linux: ["linux", "unix", "shell", "bash"],
   aws: ["aws", "amazon web services", "s3", "glue", "athena", "lambda", "redshift", "emr"],
   cloud: ["cloud", "gcp", "azure"],
   parquet: ["parquet", "avro", "orc", "file formats"],
@@ -76,10 +86,13 @@ export type ResumeData = {
 };
 
 const MAX_PROJECTS = 3;
+const RESUME_PROJECTS = PROJECTS.filter((p) => p.onResume !== false);
 
-/** Default resume: everything in its authored order (projects capped, featured first). */
+/** Default resume: authored content, with the projects listed in DEFAULT_RESUME_PROJECTS. */
 export function defaultResume(): ResumeData {
-  const projects = [...PROJECTS.filter((p) => p.featured), ...PROJECTS.filter((p) => !p.featured)].slice(0, MAX_PROJECTS);
+  const projects = DEFAULT_RESUME_PROJECTS.map((t) => RESUME_PROJECTS.find((p) => p.title === t)).filter(
+    (p): p is Project => Boolean(p),
+  );
   return { experience: EXPERIENCE, projects, skills: SKILLS, tailored: false, matched: [] };
 }
 
@@ -98,10 +111,10 @@ export function tailorResume(jd: string): ResumeData {
   }));
 
   // Projects: pick the most relevant ones (stable for ties, so authored order wins).
-  const projects = PROJECTS.map((p, i) => ({ p, s: score(p.tags, weights), i }))
+  const projects = RESUME_PROJECTS.map((p, i) => ({ p, s: score(p.tags, weights), i }))
     .sort((a, b) => b.s - a.s || a.i - b.i)
     .slice(0, MAX_PROJECTS)
-    .map((x) => x.p);
+    .map((x) => x.p); // bullets keep their authored order so each project still reads as a story
 
   // Skills: within each group, relevant skills first; groups ordered by total relevance.
   const skills = SKILLS.map((g, i) => {

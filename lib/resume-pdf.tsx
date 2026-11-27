@@ -2,133 +2,181 @@ import { Document, Link, Page, StyleSheet, Text, View, renderToBuffer } from "@r
 import { ACHIEVEMENTS, EDUCATION, PROFILE, PUBLICATIONS } from "@/content/profile";
 import type { ResumeData } from "@/lib/tailor";
 
-const INK = "#111827";
-const MUTED = "#4b5563";
-const RULE = "#d1d5db";
-const ACCENT = "#1e3a8a";
+// Layout mirrors the original LaTeX resume: sans-serif, 0.35in margins, centred header,
+// ruled section titles, bold org + right-aligned date, italic role + italic location.
+
+const MARGIN = 25; // 0.35in
 
 const s = StyleSheet.create({
-  page: { paddingTop: 30, paddingBottom: 30, paddingHorizontal: 38, fontFamily: "Helvetica", fontSize: 9, color: INK, lineHeight: 1.3 },
-  name: { fontFamily: "Helvetica-Bold", fontSize: 21, letterSpacing: 0.3, lineHeight: 1.15 },
-  headline: { fontSize: 10.5, color: MUTED, marginTop: 3 },
-  contact: { flexDirection: "row", flexWrap: "wrap", marginTop: 6, fontSize: 8.8, color: MUTED },
-  contactItem: { marginRight: 10 },
-  link: { color: ACCENT, textDecoration: "none" },
-  section: { marginTop: 8 },
+  page: { padding: MARGIN, fontFamily: "Helvetica", fontSize: 10, color: "#000", lineHeight: 1.2 },
+  name: { fontFamily: "Helvetica-Bold", fontSize: 24, textAlign: "center", lineHeight: 1.1 },
+  contact: { flexDirection: "row", justifyContent: "center", flexWrap: "wrap", marginTop: 5, fontSize: 9.5 },
+  link: { color: "#000", textDecoration: "underline" },
+  sep: { marginHorizontal: 6 },
+  section: { marginTop: 5 },
   sectionTitle: {
-    fontFamily: "Helvetica-Bold", fontSize: 9.5, letterSpacing: 1.2, textTransform: "uppercase", color: ACCENT,
-    borderBottomWidth: 0.7, borderBottomColor: RULE, paddingBottom: 2, marginBottom: 5,
+    fontFamily: "Helvetica-Bold", fontSize: 12.5, borderBottomWidth: 0.8, borderBottomColor: "#000",
+    paddingBottom: 1.5, marginBottom: 3,
   },
+  block: { paddingLeft: 10, marginBottom: 2.5 },
   row: { flexDirection: "row", justifyContent: "space-between" },
   bold: { fontFamily: "Helvetica-Bold" },
-  muted: { color: MUTED },
-  item: { marginBottom: 4 },
-  bullet: { flexDirection: "row", marginTop: 1.5 },
-  dot: { width: 9, color: MUTED },
-  bulletText: { flex: 1 },
-  skillRow: { flexDirection: "row", marginBottom: 2 },
-  skillLabel: { width: 100, fontFamily: "Helvetica-Bold" },
-  footer: { position: "absolute", bottom: 16, left: 40, right: 40, fontSize: 7, color: "#9ca3af", textAlign: "center" },
+  italic: { fontFamily: "Helvetica-Oblique", fontSize: 9.5 },
+  bullets: { paddingLeft: 10, marginTop: 1 },
+  bullet: { flexDirection: "row" },
+  dot: { width: 9 },
+  bulletText: { flex: 1, fontSize: 9.3 },
+  line: { paddingLeft: 10, fontSize: 9.5, marginBottom: 0.5 },
+  footer: { position: "absolute", bottom: 10, left: MARGIN, right: MARGIN, fontSize: 6.5, color: "#999", textAlign: "center" },
 });
 
-function Bullet({ children }: { children: string }) {
+function Bullets({ items }: { items: string[] }) {
   return (
-    <View style={s.bullet}>
-      <Text style={s.dot}>•</Text>
-      <Text style={s.bulletText}>{children}</Text>
+    <View style={s.bullets}>
+      {items.map((t) => (
+        <View key={t} style={s.bullet}>
+          <Text style={s.dot}>•</Text>
+          <Text style={s.bulletText}>{t}</Text>
+        </View>
+      ))}
+    </View>
+  );
+}
+
+function Subheading({ left1, right1, left2, right2 }: { left1: string; right1: string; left2: string; right2: string }) {
+  return (
+    <View>
+      <View style={s.row}>
+        <Text style={s.bold}>{left1}</Text>
+        <Text>{right1}</Text>
+      </View>
+      <View style={s.row}>
+        <Text style={s.italic}>{left2}</Text>
+        <Text style={s.italic}>{right2}</Text>
+      </View>
+    </View>
+  );
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <View style={s.section}>
+      <Text style={s.sectionTitle}>{title}</Text>
+      {children}
     </View>
   );
 }
 
 function ResumeDocument({ data }: { data: ResumeData }) {
   const host = PROFILE.site.replace(/^https?:\/\//, "");
+  const work = data.experience.filter((r) => r.category === "work");
+  const volunteer = data.experience.filter((r) => r.category === "volunteer");
+  const contacts = [
+    { label: PROFILE.email, href: `mailto:${PROFILE.email}` },
+    { label: host, href: PROFILE.site },
+    { label: "linkedin.com/in/ishaanmishraa", href: PROFILE.links.linkedin },
+    { label: "github.com/ishaan-mishraa", href: PROFILE.links.github },
+  ];
+
   return (
-    <Document title={`${PROFILE.name} – Resume`} author={PROFILE.name} subject={PROFILE.headline}>
+    <Document title={`${PROFILE.name} – Resume`} author={PROFILE.name}>
       <Page size="A4" style={s.page}>
         <Text style={s.name}>{PROFILE.name}</Text>
-        <Text style={s.headline}>{PROFILE.headline}</Text>
         <View style={s.contact}>
-          <Text style={s.contactItem}>{PROFILE.location}</Text>
-          <Link style={[s.contactItem, s.link]} src={`mailto:${PROFILE.email}`}>{PROFILE.email}</Link>
-          <Link style={[s.contactItem, s.link]} src={PROFILE.site}>{host}</Link>
-          <Link style={[s.contactItem, s.link]} src={PROFILE.links.github}>github.com/ishaan-mishraa</Link>
-          <Link style={[s.contactItem, s.link]} src={PROFILE.links.linkedin}>linkedin.com/in/ishaanmishraa</Link>
+          {contacts.flatMap((c, i) => [
+            ...(i > 0 ? [<Text key={`sep-${i}`} style={s.sep}>|</Text>] : []),
+            <Link key={c.href} style={s.link} src={c.href}>{c.label}</Link>,
+          ])}
         </View>
 
-        <View style={s.section}>
-          <Text style={s.sectionTitle}>Summary</Text>
-          <Text>{PROFILE.summary}</Text>
-        </View>
-
-        <View style={s.section}>
-          <Text style={s.sectionTitle}>Experience</Text>
-          {data.experience.map((r) => (
-            <View key={r.org} style={s.item} wrap={false}>
-              <View style={s.row}>
-                <Text style={s.bold}>{r.title}</Text>
-                <Text style={s.muted}>{r.period}</Text>
-              </View>
-              <Text style={s.muted}>{r.org} · {r.location}</Text>
-              {r.bullets.map((b) => <Bullet key={b.text}>{b.text}</Bullet>)}
+        <Section title="Education">
+          {EDUCATION.map((e) => (
+            <View key={e.school} style={s.block}>
+              <Subheading left1={e.school} right1={e.period} left2={`${e.degree} (${e.detail})`} right2={e.location} />
             </View>
           ))}
-        </View>
+        </Section>
 
-        <View style={s.section}>
-          <Text style={s.sectionTitle}>Projects & Research</Text>
-          {data.projects.map((p) => (
-            <View key={p.title} style={s.item} wrap={false}>
-              <View style={s.row}>
-                <Text>
-                  <Text style={s.bold}>{p.title}</Text>
-                  <Text style={s.muted}>  ·  {p.stack.join(", ")}</Text>
-                </Text>
-                {p.links[0] && <Link style={s.link} src={p.links[0].href}>{p.links[0].label}</Link>}
-              </View>
-              <Bullet>{p.summary}</Bullet>
-            </View>
-          ))}
-        </View>
-
-        <View style={s.section}>
-          <Text style={s.sectionTitle}>Skills</Text>
+        <Section title="Technical Skills">
           {data.skills.map((g) => (
-            <View key={g.label} style={s.skillRow}>
-              <Text style={s.skillLabel}>{g.label}</Text>
-              <Text style={{ flex: 1 }}>{g.items.map((i) => i.name).join(", ")}</Text>
-            </View>
-          ))}
-        </View>
-
-        <View style={s.section}>
-          <Text style={s.sectionTitle}>Publications</Text>
-          {PUBLICATIONS.map((p) => (
-            <Text key={p.citation} style={{ marginBottom: 2 }}>
-              {p.citation} <Link style={s.link} src={p.href}>DOI</Link>
+            <Text key={g.label} style={s.line}>
+              <Text style={s.bold}>{g.label}</Text>: {g.items.map((i) => i.name).join(", ")}
             </Text>
           ))}
-        </View>
+        </Section>
 
-        <View style={s.section} wrap={false}>
-          <Text style={s.sectionTitle}>Education</Text>
-          {EDUCATION.map((e) => (
-            <View key={e.title} style={s.row}>
-              <Text>
-                <Text style={s.bold}>{e.title}</Text>
-                <Text style={s.muted}>  ·  {e.org}  ·  {e.detail}</Text>
-              </Text>
-              <Text style={s.muted}>{e.period}</Text>
+        <Section title="Experience">
+          {work.map((r) => (
+            <View key={r.org} style={s.block} wrap={false}>
+              <Subheading left1={r.org} right1={r.period} left2={r.title} right2={r.location} />
+              <Bullets items={r.bullets.map((b) => b.text)} />
             </View>
           ))}
-        </View>
+        </Section>
 
-        <View style={s.section} wrap={false}>
-          <Text style={s.sectionTitle}>Achievements</Text>
-          {ACHIEVEMENTS.map((a) => <Bullet key={a}>{a}</Bullet>)}
-        </View>
+        <Section title="Projects">
+          {data.projects.map((p) => (
+            <View key={p.title} style={s.block} wrap={false}>
+              <View style={s.row}>
+                <Text style={{ flex: 1, fontSize: 9.5 }}>
+                  <Text style={[s.bold, { fontSize: 10 }]}>{p.title}</Text>
+                  {"  |  "}
+                  <Text style={s.italic}>{p.stack.join(", ")}</Text>
+                  {p.links.map((l) => (
+                    <Text key={l.href}>
+                      {"  |  "}
+                      <Link style={s.link} src={l.href}>{l.label}</Link>
+                    </Text>
+                  ))}
+                </Text>
+                <Text>{p.year}</Text>
+              </View>
+              <Bullets items={p.bullets.map((b) => b.text)} />
+            </View>
+          ))}
+        </Section>
+
+        <Section title="Publications">
+          {PUBLICATIONS.map((p) => (
+            <View key={p.title} style={s.block} wrap={false}>
+              <View style={s.row}>
+                <Text style={[s.bold, { flex: 1 }]}>
+                  {p.title}
+                  {p.href ? (
+                    <Text style={{ fontFamily: "Helvetica" }}>
+                      {"  |  "}
+                      <Link style={s.link} src={p.href}>DOI</Link>
+                    </Text>
+                  ) : null}
+                </Text>
+                <Text>{p.date}</Text>
+              </View>
+              <Bullets items={p.bullets} />
+            </View>
+          ))}
+        </Section>
+
+        {volunteer.length > 0 && (
+          <Section title="Volunteer Experience">
+            {volunteer.map((r) => (
+              <View key={r.org} style={s.block} wrap={false}>
+                <Subheading left1={r.org} right1={r.period} left2={r.title} right2={r.location} />
+                <Bullets items={r.bullets.map((b) => b.text)} />
+              </View>
+            ))}
+          </Section>
+        )}
+
+        <Section title="Achievements">
+          {ACHIEVEMENTS.map((a) => (
+            <Text key={a.lead} style={s.line}>
+              <Text style={s.bold}>{a.lead}</Text>: {a.text}
+            </Text>
+          ))}
+        </Section>
 
         <Text style={s.footer} fixed>
-          Latest version: {host}/resume{data.tailored ? " · this copy was ordered for a specific job description" : ""}
+          Latest version: {host}/resume{data.tailored ? " · ordered for a specific job description" : ""}
         </Text>
       </Page>
     </Document>
