@@ -28,9 +28,13 @@ export function SiteNav() {
       }`}
     >
       <nav className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
-        <Link href="/" className="group relative font-serif text-[1.4rem] leading-none tracking-tight text-slate-100">
-          Ishaan <em className="text-slate-300">Mishra</em>
-          <span className="absolute -bottom-1 left-0 h-px w-0 bg-gradient-to-r from-sky-400 to-transparent transition-all duration-300 group-hover:w-full" />
+        <Link
+          href="/"
+          aria-label="Ishaan Mishra, home"
+          className="group relative font-serif text-[2.1rem] leading-none tracking-[0.02em] text-slate-100 transition-colors hover:text-white"
+        >
+          I<em className="text-slate-300 transition-colors group-hover:text-slate-100">M</em>
+          <span className="absolute -bottom-1.5 left-0 h-px w-0 bg-gradient-to-r from-slate-300 to-transparent transition-all duration-300 group-hover:w-full" />
         </Link>
         <div className="flex items-center gap-1 text-sm">
           {LINKS.map((l) => (
