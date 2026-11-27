@@ -4,7 +4,7 @@ import { ImageResponse } from 'next/og';
 export const runtime = 'edge';
 
 // Image metadata
-export const alt = 'Ishaan Mishra: backend engineering and computer vision';
+export const alt = 'Ishaan Mishra: data engineering and ML research';
 export const size = {
   width: 1200,
   height: 630,
@@ -98,14 +98,14 @@ export default async function Image() {
               letterSpacing: '-0.02em',
             }}
           >
-            Backend <span style={{ color: '#475569', margin: '0 12px' }}>·</span> Computer Vision
+            Data Engineering <span style={{ color: '#475569', margin: '0 12px' }}>·</span> ML Research
           </p>
 
           {/* Tech Badges */}
           <div style={{ display: 'flex', gap: '16px', marginTop: '48px' }}>
-            <span style={{ color: '#cbd5e1', fontSize: '20px', border: '1px solid #334155', padding: '8px 24px', borderRadius: '40px' }}>Next.js</span>
-            <span style={{ color: '#cbd5e1', fontSize: '20px', border: '1px solid #334155', padding: '8px 24px', borderRadius: '40px' }}>Spring Boot</span>
-            <span style={{ color: '#cbd5e1', fontSize: '20px', border: '1px solid #334155', padding: '8px 24px', borderRadius: '40px' }}>Python</span>
+            <span style={{ color: '#cbd5e1', fontSize: '20px', border: '1px solid #334155', padding: '8px 24px', borderRadius: '40px' }}>AWS</span>
+            <span style={{ color: '#cbd5e1', fontSize: '20px', border: '1px solid #334155', padding: '8px 24px', borderRadius: '40px' }}>PyTorch</span>
+            <span style={{ color: '#cbd5e1', fontSize: '20px', border: '1px solid #334155', padding: '8px 24px', borderRadius: '40px' }}>Computer Vision</span>
             <span style={{ color: '#cbd5e1', fontSize: '20px', border: '1px solid #334155', padding: '8px 24px', borderRadius: '40px' }}>Deep Learning</span>
           </div>
         </div>

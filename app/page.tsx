@@ -1,187 +1,85 @@
-import React from "react";
-import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import { ArrowRight, ArrowUpRight, FileText } from "lucide-react";
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Download, Briefcase, GraduationCap, ExternalLink } from "lucide-react";
 import { StatTile } from "@/components/stat-tile";
+import { SpotlightCard } from "@/components/spotlight-card";
+import { SectionHeading } from "@/components/section-heading";
+import {
+  ACHIEVEMENTS,
+  EDUCATION,
+  EXPERIENCE,
+  PROFILE,
+  PROJECTS,
+  PUBLICATIONS,
+  SKILLS,
+  STATS,
+} from "@/content/profile";
 
-// ---------------------------------------------------------------------------
-// CONTENT — edit this section to update the site. The layout below reads it.
-// ---------------------------------------------------------------------------
-
-// Tip: put your resume in /public (e.g. public/Ishaan_Mishra_Resume.pdf) and set
-// this to "/Ishaan_Mishra_Resume.pdf". Google Drive download links can expire.
-const RESUME_URL =
-  "https://drive.usercontent.google.com/download?id=1PpmLUcKgG8oyywz1APtBKR-Cg2rVfX_r&export=download&authuser=0&confirm=t&uuid=9b0c78a2-11d7-4fd6-bde5-14d73b713f25&at=AFYLz4NtGQABJEni6o3hcUpLEjZE:1787755107775";
-
-const TAGLINE =
-  "I build reliable backends and train vision models, lately ones that catch deepfakes.";
-
-const SKILLS = ["Java", "Spring Boot", "Angular", "Next.js", "Python", "Deep Learning", "PostgreSQL"];
-
-const STATS = [
-  {
-    value: "9.37",
-    label: "CGPA",
-    detail: "B.Tech in Computer Science & Engineering, KIIT University (2022–26).",
-  },
-  {
-    value: "93.47%",
-    label: "Deepfake detection accuracy",
-    detail: "Best of the hybrid Vision Transformer + CNN models our team built. More under Selected work.",
-  },
-  {
-    value: "Published",
-    label: "Springer LNNS",
-    detail: "Comparative Study of Emerging DL Models in Brain Tumor Detection. Presented at ICTIS 2026, Bangkok.",
-  },
-];
-
-type LinkItem = { label: string; href: string };
-type Project = { title: string; kind: string; description: string; stack: string[]; links: LinkItem[] };
-
-const PROJECTS: Project[] = [
-  {
-    title: "Hybrid Deepfake Detection",
-    kind: "Research",
-    description:
-      "Pairs a SWIN Transformer with CNN and CLIP backbones to tell real faces from AI-generated ones. The best hybrid reached 93.47% accuracy, and every hybrid beat its standalone backbone. Team project; paper in preparation.",
-    stack: ["Python", "Vision Transformers", "CNNs"],
-    links: [{ label: "Code", href: "https://github.com/ishaan-mishraa/hybrid-deepfake-detection" }],
-  },
-  {
-    title: "Brain Tumor Detection from MRI",
-    kind: "Publication",
-    description:
-      "Co-authored a comparative study of modern CNN and transformer models for classifying brain MRI scans as tumor or non-tumor. Presented at ICTIS 2026 in Bangkok; to appear in Springer LNNS.",
-    stack: ["Python", "Deep Learning", "Medical Imaging"],
-    links: [{ label: "Code", href: "https://github.com/ishaan-mishraa/btd-comparative-study" }],
-  },
-  {
-    title: "CricMarket",
-    kind: "Product",
-    description:
-      "Tracks IPL auction prices (2024–26), team purses and player T20 stats. A Python scraper on GitHub Actions feeds Supabase, served through a Hono API on Cloudflare Workers and a Next.js app.",
-    stack: ["Next.js", "Hono", "Cloudflare Workers", "Supabase", "Python"],
-    links: [
-      { label: "Live", href: "https://cricmarket.ishaanm.dev" },
-      { label: "Code", href: "https://github.com/ishaan-mishraa/cricmarket" },
-    ],
-  },
-  {
-    title: "Leavewise",
-    kind: "Full-stack",
-    description:
-      "Leave management for small teams that warns when too many teammates would be off at once. Separate employee, manager and HR roles, enforced with Spring Security and JWT.",
-    stack: ["Angular", "Spring Boot", "PostgreSQL", "Docker"],
-    links: [{ label: "Code", href: "https://github.com/ishaan-mishraa/leavewise" }],
-  },
-];
-
-type Role = { title: string; org: string; meta: string; points: string[]; link?: LinkItem };
-
-const EXPERIENCE: Role[] = [
-  {
-    title: "Systems Engineer (Digital)",
-    org: "Tata Consultancy Services",
-    meta: "Jun 2026 – Present · Bengaluru",
-    points: [
-      "Trained in the Java full-stack track (Spring Boot, Angular, SQL).",
-      "Built a role-based banking app with JWT auth and guardian approval for high-value transfers as the final project.",
-    ],
-  },
-  {
-    title: "Project Intern",
-    org: "ADRDE, DRDO",
-    meta: "May – Jun 2024 · Agra",
-    points: [
-      "Built an intranet plotting tool in React that parses six data file formats into interactive 2D and 3D visualizations (Plotly.js, Three.js, Cesium.js).",
-    ],
-    link: { label: "Certificate", href: "https://drive.google.com/file/d/1DnLuerQ-N-id9Y5GgoMB3BZC9brV87U-/view?usp=sharing" },
-  },
-  {
-    title: "Technical Team Member",
-    org: "Enactus KIIT",
-    meta: "Mar 2023 – Jan 2025 · Bhubaneswar",
-    points: [
-      "Built web apps for social-enterprise projects; part of the team that won the Early Stage category at Enactus Nationals 2024.",
-    ],
-  },
-];
-
-const EDUCATION = [
-  { title: "B.Tech, Computer Science & Engineering", org: "KIIT University", meta: "2022 – 2026 · CGPA 9.37" },
-  { title: "GATE Computer Science", org: "Qualified 2025 and 2026", meta: "96+ percentile (2026)" },
-];
-
-const NOW = "Learning Japanese and going deeper into deepfake-detection research.";
-
-// ---------------------------------------------------------------------------
-// LAYOUT
-// ---------------------------------------------------------------------------
-
-const cardClass = "bg-slate-900/40 border-slate-800 backdrop-blur-sm";
+// All content lives in content/profile.ts — this file is layout only.
 
 function TimelineDot({ active }: { active?: boolean }) {
   return (
-    <div
-      className={`absolute -left-[41px] top-2 h-4 w-4 rounded-full border-2 ${
-        active ? "border-slate-400" : "border-slate-800"
-      } bg-slate-950 ring-4 ring-slate-950`}
+    <span
+      className={`absolute -left-[39px] top-5 h-3.5 w-3.5 rounded-full border-2 ${
+        active ? "border-sky-400 bg-sky-400/20" : "border-slate-700 bg-slate-950"
+      } ring-4 ring-slate-950`}
     />
   );
 }
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen w-full bg-slate-950 font-sans selection:bg-slate-800 overflow-x-hidden pb-8">
+    <main className="relative min-h-screen w-full overflow-x-hidden bg-slate-950 pb-8 font-sans selection:bg-sky-500/30">
       {/* --- HERO --- */}
-      <div className="relative flex h-screen w-full flex-col items-center justify-center shrink-0">
-        <div className="absolute inset-0 z-0 w-full h-full">
+      <section className="relative flex h-screen w-full shrink-0 flex-col items-center justify-center">
+        <div className="absolute inset-0 z-0 h-full w-full">
           <BackgroundRippleEffect />
         </div>
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-48 bg-gradient-to-b from-transparent to-slate-950"
+        />
 
-        <div className="relative z-20 w-full max-w-3xl px-6 flex flex-col items-center pointer-events-none">
-          <h1 className="text-center text-5xl md:text-7xl font-bold text-slate-100 tracking-tight pointer-events-auto">
-            Ishaan Mishra
+        <div className="pointer-events-none relative z-20 flex w-full max-w-3xl flex-col items-center px-6">
+          <span className="pointer-events-auto mb-8 inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/60 px-3 py-1 text-xs text-slate-400 backdrop-blur-sm">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+            </span>
+            {PROFILE.headline}
+          </span>
+
+          <h1 className="pointer-events-auto bg-gradient-to-b from-slate-50 to-slate-400 bg-clip-text text-center text-5xl font-bold tracking-tight text-transparent md:text-7xl">
+            {PROFILE.name}
           </h1>
 
-          <div className="mt-6 max-w-2xl text-center pointer-events-auto">
-            <TextGenerateEffect words={TAGLINE} className="text-slate-400 text-base md:text-xl" />
+          <div className="pointer-events-auto mt-6 max-w-2xl text-center">
+            <TextGenerateEffect words={PROFILE.tagline} className="text-base text-slate-400 md:text-xl" />
           </div>
 
-          <div className="mt-10 flex flex-wrap justify-center gap-3 pointer-events-auto">
-            <a
-              href={RESUME_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex items-center gap-2 rounded-full bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-950 transition-all hover:bg-slate-300 hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(255,255,255,0.1)]"
+          <div className="pointer-events-auto mt-10 flex flex-wrap justify-center gap-3">
+            <Link
+              href="/resume"
+              className="group flex items-center gap-2 rounded-full bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-950 shadow-[0_0_40px_rgba(255,255,255,0.1)] transition-all hover:scale-105 hover:bg-white active:scale-95"
             >
-              <Download className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
-              Download Resume
-            </a>
+              <FileText className="h-4 w-4" />
+              Resume
+            </Link>
             <a
               href="#work"
-              className="flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/50 px-6 py-3 text-sm font-semibold text-slate-200 backdrop-blur-sm transition-colors hover:bg-slate-800"
+              className="group flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/50 px-6 py-3 text-sm font-semibold text-slate-200 backdrop-blur-sm transition-colors hover:bg-slate-800"
             >
               See my work
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </a>
           </div>
-
-          <div className="flex flex-wrap justify-center gap-3 mt-10 pointer-events-auto">
-            {SKILLS.map((s) => (
-              <Badge key={s} variant="outline" className="bg-slate-900/50 text-slate-300 border-slate-700 backdrop-blur-sm px-3 py-1">
-                {s}
-              </Badge>
-            ))}
-          </div>
         </div>
-      </div>
+      </section>
 
       {/* --- AT A GLANCE --- */}
-      <section className="relative z-20 w-full max-w-5xl px-6 mx-auto mt-12">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <section className="relative z-20 mx-auto -mt-16 w-full max-w-5xl px-6">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           {STATS.map((s) => (
             <StatTile key={s.label} value={s.value} label={s.label} detail={s.detail} />
           ))}
@@ -189,129 +87,216 @@ export default function Home() {
       </section>
 
       {/* --- SELECTED WORK --- */}
-      <section id="work" className="relative z-20 w-full max-w-5xl px-6 mx-auto mt-24 scroll-mt-12">
-        <h2 className="text-2xl font-bold text-slate-100 mb-6">Selected work</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <section id="work" className="relative z-20 mx-auto mt-28 w-full max-w-5xl scroll-mt-20 px-6">
+        <SectionHeading index="01" title="Selected work" />
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {PROJECTS.map((p) => (
-            <Card key={p.title} className={`${cardClass} flex flex-col`}>
-              <CardHeader>
-                <CardDescription className="text-xs uppercase tracking-widest text-slate-500">{p.kind}</CardDescription>
-                <CardTitle className="text-slate-100 text-lg">{p.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-col flex-grow gap-4">
-                <p className="text-slate-300 text-sm leading-relaxed">{p.description}</p>
-                <div className="flex flex-wrap gap-2">
+            <SpotlightCard key={p.title}>
+              <div className="flex h-full flex-col gap-4 p-6">
+                <div>
+                  <p className="font-mono text-[11px] uppercase tracking-widest text-slate-500">{p.kind}</p>
+                  <h3 className="mt-1.5 text-lg font-semibold text-slate-100">{p.title}</h3>
+                </div>
+                <p className="text-sm leading-relaxed text-slate-300">{p.description}</p>
+                <div className="flex flex-wrap gap-1.5">
                   {p.stack.map((t) => (
-                    <Badge key={t} variant="secondary" className="bg-slate-800 text-slate-300 border-none text-xs">
+                    <span key={t} className="rounded-md bg-slate-800/80 px-2 py-0.5 font-mono text-[11px] text-slate-300">
                       {t}
-                    </Badge>
+                    </span>
                   ))}
                 </div>
-                <div className="mt-auto flex gap-4 pt-2">
+                <div className="mt-auto flex gap-4 pt-1">
                   {p.links.map((l) => (
                     <a
                       key={l.href}
                       href={l.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-sm font-medium text-sky-400 hover:text-sky-300 transition-colors"
+                      className="flex items-center gap-1 text-sm font-medium text-sky-400 transition-colors hover:text-sky-300"
                     >
-                      {l.label} <ExternalLink className="w-3.5 h-3.5" />
+                      {l.label} <ArrowUpRight className="h-3.5 w-3.5" />
                     </a>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </SpotlightCard>
+          ))}
+        </div>
+      </section>
+
+      {/* --- RESEARCH --- */}
+      <section id="research" className="relative z-20 mx-auto mt-28 w-full max-w-5xl scroll-mt-20 px-6">
+        <SectionHeading index="02" title="Research" />
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
+          <SpotlightCard className="md:col-span-3">
+            <div className="p-6">
+              <p className="font-mono text-[11px] uppercase tracking-widest text-slate-500">Current focus</p>
+              <h3 className="mt-1.5 text-lg font-semibold text-slate-100">Dataset bias in deepfake detection</h3>
+              <p className="mt-3 text-sm leading-relaxed text-slate-300">
+                Detectors trained on merged datasets can score well by recognising <em>which dataset</em> an image came
+                from rather than whether it is fake. I&apos;m measuring how much of reported accuracy comes from such
+                shortcuts, and which fixes — identity-disjoint splits, matched compression, frequency features —
+                actually help models generalise.
+              </p>
+            </div>
+          </SpotlightCard>
+          <SpotlightCard className="md:col-span-2">
+            <div className="p-6">
+              <p className="font-mono text-[11px] uppercase tracking-widest text-slate-500">Publications</p>
+              <ul className="mt-3 space-y-3">
+                {PUBLICATIONS.map((p) => (
+                  <li key={p.href} className="text-sm leading-relaxed text-slate-300">
+                    {p.citation}{" "}
+                    <a
+                      href={p.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-0.5 text-sky-400 hover:text-sky-300"
+                    >
+                      DOI <ArrowUpRight className="h-3 w-3" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </SpotlightCard>
+        </div>
+      </section>
+
+      {/* --- SKILLS --- */}
+      <section id="skills" className="relative z-20 mx-auto mt-28 w-full max-w-5xl scroll-mt-20 px-6">
+        <SectionHeading index="03" title="Toolkit" />
+        <div className="grid grid-cols-1 gap-x-10 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
+          {SKILLS.map((g) => (
+            <div key={g.label}>
+              <p className="mb-3 text-sm font-medium text-slate-400">{g.label}</p>
+              <div className="flex flex-wrap gap-2">
+                {g.items.map((it) => (
+                  <span
+                    key={it.name}
+                    className="rounded-full border border-slate-800 bg-slate-900/50 px-3 py-1 text-xs text-slate-300 transition-colors hover:border-slate-600 hover:text-slate-100"
+                  >
+                    {it.name}
+                  </span>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       </section>
 
       {/* --- EXPERIENCE + EDUCATION --- */}
-      <section id="experience" className="relative z-20 w-full max-w-5xl px-6 mx-auto mt-24 scroll-mt-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div>
-            <h2 className="text-2xl font-bold text-slate-100 mb-8 flex items-center gap-2">
-              <Briefcase className="w-5 h-5 text-slate-400" /> Experience
-            </h2>
-            <div className="border-l-2 border-slate-800 ml-3 pl-8 py-2 flex flex-col gap-8">
-              {EXPERIENCE.map((r, i) => (
-                <div key={r.org} className="relative">
-                  <TimelineDot active={i === 0} />
-                  <Card className={`${cardClass} shadow-none`}>
-                    <CardHeader className="p-4 pb-2 flex flex-row items-start justify-between gap-4">
+      <section id="experience" className="relative z-20 mx-auto mt-28 w-full max-w-5xl scroll-mt-20 px-6">
+        <SectionHeading index="04" title="Experience" />
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-5">
+          <div className="ml-2 flex flex-col gap-6 border-l border-slate-800 pl-8 md:col-span-3">
+            {EXPERIENCE.map((r, i) => (
+              <div key={r.org} className="relative">
+                <TimelineDot active={i === 0} />
+                <SpotlightCard>
+                  <div className="p-5">
+                    <div className="flex items-start justify-between gap-4">
                       <div>
-                        <CardTitle className="text-slate-100 text-base">{r.title}</CardTitle>
-                        <CardDescription className="text-slate-400">
-                          {r.org} · {r.meta}
-                        </CardDescription>
+                        <h3 className="text-base font-semibold text-slate-100">{r.title}</h3>
+                        <p className="mt-0.5 text-sm text-slate-400">
+                          {r.org} · {r.period}
+                        </p>
                       </div>
                       {r.link && (
                         <a
                           href={r.link.href}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="shrink-0 text-xs text-sky-400 hover:underline flex items-center gap-1"
+                          className="flex shrink-0 items-center gap-1 text-xs text-sky-400 hover:underline"
                         >
-                          {r.link.label} <ExternalLink className="w-3 h-3" />
+                          {r.link.label} <ArrowUpRight className="h-3 w-3" />
                         </a>
                       )}
-                    </CardHeader>
-                    <CardContent className="p-4 pt-0 text-slate-300 text-sm leading-relaxed space-y-2">
-                      {r.points.map((pt) => (
-                        <p key={pt}>{pt}</p>
+                    </div>
+                    <ul className="mt-3 space-y-2 text-sm leading-relaxed text-slate-300">
+                      {r.bullets.map((b) => (
+                        <li key={b.text} className="flex gap-2">
+                          <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-slate-500" />
+                          {b.text}
+                        </li>
                       ))}
-                    </CardContent>
-                  </Card>
-                </div>
-              ))}
-            </div>
+                    </ul>
+                  </div>
+                </SpotlightCard>
+              </div>
+            ))}
           </div>
 
-          <div>
-            <h2 className="text-2xl font-bold text-slate-100 mb-8 flex items-center gap-2">
-              <GraduationCap className="w-5 h-5 text-slate-400" /> Education
-            </h2>
-            <div className="border-l-2 border-slate-800 ml-3 pl-8 py-2 flex flex-col gap-8">
-              {EDUCATION.map((e, i) => (
-                <div key={e.title} className="relative">
-                  <TimelineDot active={i === 0} />
-                  <Card className={`${cardClass} shadow-none`}>
-                    <CardHeader className="p-4">
-                      <CardTitle className="text-slate-100 text-base">{e.title}</CardTitle>
-                      <CardDescription className="text-slate-400">
-                        {e.org} · {e.meta}
-                      </CardDescription>
-                    </CardHeader>
-                  </Card>
-                </div>
+          <div className="flex flex-col gap-6 md:col-span-2">
+            <div>
+              <p className="mb-3 font-mono text-[11px] uppercase tracking-widest text-slate-500">Education</p>
+              {EDUCATION.map((e) => (
+                <SpotlightCard key={e.title}>
+                  <div className="p-5">
+                    <h3 className="text-base font-semibold text-slate-100">{e.title}</h3>
+                    <p className="mt-0.5 text-sm text-slate-400">
+                      {e.org} · {e.period}
+                    </p>
+                    <p className="mt-2 text-sm text-slate-300">{e.detail}</p>
+                  </div>
+                </SpotlightCard>
               ))}
             </div>
-
-            <div className="mt-10 rounded-xl border border-slate-800 bg-slate-900/40 p-5">
-              <p className="text-xs uppercase tracking-widest text-slate-500">Now</p>
-              <p className="mt-2 text-sm text-slate-300 leading-relaxed">{NOW}</p>
+            <div>
+              <p className="mb-3 font-mono text-[11px] uppercase tracking-widest text-slate-500">Achievements</p>
+              <ul className="space-y-2 text-sm leading-relaxed text-slate-300">
+                {ACHIEVEMENTS.map((a) => (
+                  <li key={a} className="flex gap-2">
+                    <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-slate-500" />
+                    {a}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-slate-800 bg-gradient-to-br from-slate-900/70 to-slate-900/20 p-5">
+              <p className="font-mono text-[11px] uppercase tracking-widest text-slate-500">Now</p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-300">{PROFILE.now}</p>
             </div>
           </div>
         </div>
       </section>
 
+      {/* --- CTA --- */}
+      <section className="relative z-20 mx-auto mt-28 w-full max-w-5xl px-6">
+        <div className="flex flex-col items-start justify-between gap-6 rounded-2xl border border-slate-800 bg-slate-900/40 p-8 md:flex-row md:items-center">
+          <div>
+            <h2 className="text-xl font-semibold text-slate-100">Want my resume for a specific role?</h2>
+            <p className="mt-1 text-sm text-slate-400">
+              Paste the job description and download a version ordered around what the role needs.
+            </p>
+          </div>
+          <Link
+            href="/resume#tailor"
+            className="group flex shrink-0 items-center gap-2 rounded-full bg-slate-100 px-5 py-2.5 text-sm font-semibold text-slate-950 transition-colors hover:bg-white"
+          >
+            Tailor my resume <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+          </Link>
+        </div>
+      </section>
+
       {/* --- FOOTER --- */}
-      <footer className="relative z-20 w-full max-w-5xl mx-auto px-6 mt-24 pb-8">
-        <div className="border-t border-slate-800/60 pt-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          <p className="text-slate-500 text-sm">© {new Date().getFullYear()} Ishaan Mishra</p>
+      <footer className="relative z-20 mx-auto mt-20 w-full max-w-5xl px-6 pb-8">
+        <div className="flex flex-col items-center justify-between gap-6 border-t border-slate-800/60 pt-8 md:flex-row">
+          <p className="text-sm text-slate-500">© {new Date().getFullYear()} {PROFILE.name}</p>
           <div className="flex items-center gap-6 text-sm font-medium text-slate-400">
-            <a href="/contact" className="hover:text-slate-200 transition-colors">
+            <Link href="/contact" className="transition-colors hover:text-slate-200">
               Contact
-            </a>
-            <a href="https://github.com/ishaan-mishraa" target="_blank" rel="noopener noreferrer" className="hover:text-slate-200 transition-colors">
-              GitHub <span className="text-slate-600">↗</span>
-            </a>
-            <a href="https://www.linkedin.com/in/ishaanmishraa/" target="_blank" rel="noopener noreferrer" className="hover:text-slate-200 transition-colors">
-              LinkedIn <span className="text-slate-600">↗</span>
-            </a>
-            <a href="https://x.com/ishaanmishraa" target="_blank" rel="noopener noreferrer" className="hover:text-slate-200 transition-colors">
-              X <span className="text-slate-600">↗</span>
-            </a>
+            </Link>
+            {[
+              ["GitHub", PROFILE.links.github],
+              ["LinkedIn", PROFILE.links.linkedin],
+              ["Kaggle", PROFILE.links.kaggle],
+              ["X", PROFILE.links.x],
+            ].map(([label, href]) => (
+              <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-slate-200">
+                {label} <span className="text-slate-600">↗</span>
+              </a>
+            ))}
           </div>
         </div>
       </footer>
